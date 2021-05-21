@@ -5,13 +5,9 @@ using System.Text;
 
 namespace DataAccess.Abstract
 {
-   public interface IProductDal
+   public interface IProductDal:IEntityRepository<Product> //IProductDal a  sen bir IEntityRepository sin çalışma şeklin ise Product diyoruz Yada IProductDal ı IEntityRepository den türetiyoruz T yerine Product yazıyoruz diyebiliriz.
     {
-        List<Product> GetAll();
-        void Add(Product product);//Product göndeririz dısarıdan
-        void Update(Product product);
-        void Delete(Product product);
-        List<Product> GetAllByCategory(int categoryId); //ürünleri categorye göre filtreler.Dısarıdan bir categoryId göndeririz.Yani Arayüzden categorye basınca ürünler gelicek onun için olan metod
+     
 
     }
 }

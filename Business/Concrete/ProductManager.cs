@@ -20,5 +20,16 @@ namespace Business.Concrete
             //mesela yetkisi varsa ürünleri alsın dicez.
             return _productDal.GetAll();
         }
+
+        public List<Product> GetAllByCategory(int id)
+        {
+            return _productDal.GetAll(p => p.CategoryId == id);//Product içindeki CategoryId eşitse bizim gönderdiğimiz id onları filtrele demek
+            //IProductDal içinde tekrar bu metodtan oluturmaya gerek yok GetAll a filtre vererek yapabiliriz bunu
+        }
+
+        public List<Product> GetByUnitPrice(decimal min, decimal max)
+        {
+            return _productDal.GetAll(p => p.UnitPrice >= min && p.UnitPrice <= max);
+        }
     }
 }
