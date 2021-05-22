@@ -1,5 +1,6 @@
 ﻿using DataAccess.Abstract;
 using Entities.Concrete;
+using Entities.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,6 +54,11 @@ namespace DataAccess.Concrete.InMemory
         public List<Product> GetAllByCategory(int categoryId)
         {
           return  _products.Where(p => p.CategoryId == categoryId).ToList();//_product içindeki CategoryId bizim gönderdiğimiz categorId ye eşitse ürünle listelenir.
+        }
+
+        public List<ProductDetailDto> GetProductDetail()
+        {
+            throw new NotImplementedException();
         }
 
         public void Update(Product product) //burdaki product bizim gönderdiğimiz yani arayüzden gönderdiğimiz 
