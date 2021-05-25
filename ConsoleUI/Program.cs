@@ -30,10 +30,17 @@ namespace ConsoleUI
             //{
             //    Console.WriteLine(product.ProductName);
             //}
-
-            foreach (var product in productManager.GetProductDetail())//Join işlemi yaptık ondan artık ProductName ve CategoryName beraber gelebiliyor
+            var result = productManager.GetProductDetail();
+            if (result.Success == true)
             {
-                Console.WriteLine(product.ProductName + "/" +product.CategoryName);
+                foreach (var product in result.Data)//Join işlemi yaptık ondan artık ProductName ve CategoryName beraber gelebiliyor
+                {
+                    Console.WriteLine(product.ProductName + "/" + product.CategoryName);
+                }
+            }
+            else
+            {
+                Console.WriteLine(result.Message);
             }
         }
     }
