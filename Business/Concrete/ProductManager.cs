@@ -34,10 +34,10 @@ namespace Business.Concrete
         {
             //iş kodları
             //mesela yetkisi varsa ürünleri alsın dicez.
-            if (DateTime.Now.Hour==22)
-            {
-                return new ErrorDataResult<List<Product>>(Messages.MainTenanceTime);//hata mesajı burda data dönmez zaten hata var sadece succes(false) ve message döner
-            }
+            //if (DateTime.Now.Hour == 13)
+            //{
+            //    return new ErrorDataResult<List<Product>>(Messages.MainTenanceTime);//hata mesajı burda data dönmez zaten hata var sadece succes(false) ve message döner
+            //}
             return new SuccessDataResult<List<Product>> (_productDal.GetAll(),Messages.ProductsListed);//Burda eskiden return _productDal.GetAll() dı. şimdi Geriye hem ürünler hem succcess(true default olarak SuccesDataResult uldugu için) hem message döndürür o yüzden böyle
         }
 
