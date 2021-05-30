@@ -1,9 +1,13 @@
 ﻿using Business.Abstract;
 using Business.Constants;
+using Business.ValidationRules.FluentValidations;
+using Core.Aspects.Autofac.Validation;
+using Core.CrossCuttingConcerns.Validation;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using Entities.DTOs;
+using FluentValidation;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -18,13 +22,12 @@ namespace Business.Concrete
             _productDal = productDal;
         }
 
+        [ValidationAspect(typeof(ProductValidator))]//Add metodunu ProductValidator u kullanarak doğrula demek bu
         public IResult Add(Product product)//Geri dönüş değerini voidden IResult message döndürücek artık çünkü
         {
+
             //İş kodları
-            if (product.ProductName.Length<2)
-            {
-                return new ErrorResult(Messages.ProductNameInValid);//ErrorResult zaten otomatik false döner istersek message ekleyebiliriz burdaki gibi, istersek message eklemeyedebiliriz.(Sürekli kullanıcağımız mesajları Business altındaki Constants içindeki Messages clasına toplayabiliriz burdaki gibi)
-            }
+
             _productDal.Add(product);
             return new SuccessResult(Messages.ProductAdded);//Geri dönüş değerini voidden IResult yaptık bu yüzden bişeyleri geri döndürmeliyiz burda geriye Result dönücek .Burda SuccessResult zaten true döner birdaha onu belirtmeye gerek yok istersek burdaki gibi message verebiliriz vermesekde olur.
             //(Sürekli kullanıcağımız mesajları Business altındaki Constants içindeki Messages clasına toplayabiliriz burdaki gibi.Business içine yazmamızın sebebi evrensel değil Product sadece bu projeye özel ondan Core a yazmadık)
