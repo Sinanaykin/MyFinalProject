@@ -3,6 +3,7 @@ using Business.Constants;
 using Business.ValidationRules.FluentValidations;
 using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Validation;
+using Core.Utilities.Business;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
@@ -10,6 +11,7 @@ using Entities.DTOs;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Business.Concrete
@@ -17,20 +19,31 @@ namespace Business.Concrete
     public class ProductManager : IProductService
     {
         IProductDal _productDal;
-        public ProductManager(IProductDal productDal)
+        ICategoryService _categoryService;//Bir Manager içine başka bir Manager enjekte edemeyiz bu yüzden kullanmak istediğimiz managerin servisini enjekte ettik
+        public ProductManager(IProductDal productDal, ICategoryService categoryService)
         {
             _productDal = productDal;
+            _categoryService = categoryService;
         }
 
         [ValidationAspect(typeof(ProductValidator))]//Add metodunu ProductValidator u kullanarak doğrula demek bu
         public IResult Add(Product product)//Geri dönüş değerini voidden IResult message döndürücek artık çünkü
         {
-
-            //İş kodları
-
+            //Yarın öbür gün yeni kural gelirse kuralı en altta oluştur virgül diyip buraya(BusinessRules.Run içine) ekle işlem tamam.
+            IResult result = BusinessRules.Run(CheckIfProductCountOfCategoryCorrect(product.CategoryId), CheckIfProductNameExists(product.ProductName),CheckIfCategoryLimitExceded());//BusinessRules içindeki Run metoduna altta tanımladığımız iş kuralllarını gönderiyoruz burda.result tek bir sonuç döner bize
+           
+            if (result!=null)//kurala uymayan bir durum varsa
+            {
+                return result;//result döner hata mesajı mesela
+            }
+         
             _productDal.Add(product);
             return new SuccessResult(Messages.ProductAdded);//Geri dönüş değerini voidden IResult yaptık bu yüzden bişeyleri geri döndürmeliyiz burda geriye Result dönücek .Burda SuccessResult zaten true döner birdaha onu belirtmeye gerek yok istersek burdaki gibi message verebiliriz vermesekde olur.
-            //(Sürekli kullanıcağımız mesajları Business altındaki Constants içindeki Messages clasına toplayabiliriz burdaki gibi.Business içine yazmamızın sebebi evrensel değil Product sadece bu projeye özel ondan Core a yazmadık)
+           //(Sürekli kullanıcağımız mesajları Business altındaki Constants içindeki Messages clasına toplayabiliriz burdaki gibi.Business içine yazmamızın sebebi evrensel değil Product sadece bu projeye özel ondan Core a yazmadık)
+           
+
+
+
         }
 
         public IDataResult<List<Product>> GetAll()
@@ -64,6 +77,46 @@ namespace Business.Concrete
         public IDataResult<List<ProductDetailDto>> GetProductDetail()
         {
             return new SuccessDataResult<List<ProductDetailDto>>(_productDal.GetProductDetail());//ProductName ve CategoryName aynı anda alabilmek için Dto(Join işlemleri) yaptık.burdada data ve success(true) döner geriye
+        }
+
+        [ValidationAspect(typeof(ProductValidator))]
+        public IResult Update(Product product)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        //İŞ KURALLARINI BURDA METOD OLARAK OLUŞTURUP YUKRDA KULLANIYORUZ AMA PRİVATE OLMALI SADECE BU CLASS İÇİNDE KULLANILMALIDIR.
+        private IResult CheckIfProductCountOfCategoryCorrect(int categoryId) //Kategorideki ürün sayısının kurallara uygunluğunu doğrula demek.ve categoryId göndermeliyiz
+        {
+
+            var result = _productDal.GetAll(p => p.CategoryId == categoryId).Count;//Seçilen kategorideki ürün sayısını öğrenebiliriz bu şekilde.Product içindeki CategoryId si gönderdiğimiz categoryId ye eşit olanların sayısını aldık
+            if (result >= 15)
+            {
+                return new ErrorResult(Messages.ProductCountOfCategoryError); //ürün sayısı 15 den  büyükse hata mesajı döner.Messages ın içinde tanımlı bu hata mesajı
+            }
+            return new SuccessResult();
+        }
+
+        private IResult CheckIfProductNameExists(string productName) //Bu ürün ismi daha önce eklendimi kontrol et .ve productName  göndermeliyiz
+        {
+
+            var result = _productDal.GetAll(p => p.ProductName == productName).Any();//Gönderdiğimiz productName isminde hiç isim varmı git bak deriz.Any  filtrelemeye uyan kayıt var mı demek
+            if (result==true)
+            {
+                return new ErrorResult(Messages.ProductNameAlreadyExists); //Böyle bir isim zaten var diye hata alır Messages ın içinde tanımlı bu hata mesajı
+            }
+            return new SuccessResult();
+        }
+
+        private IResult CheckIfCategoryLimitExceded()
+        {
+            var result = _categoryService.GetAll();//bütün category bilgilerini al.Burda Bir Manager içine başka bir Manager enjekte edemeyiz bu yüzden kullanmak istediğimiz managerin servisini enjekte ettik yukarda burda onu kullanıdk
+            if (result.Data.Count>15)//Category sayısı 15 den büyükse
+            {
+                return new ErrorResult(Messages.CategoryLimitExceded); //limit aşıldı diye mesaj döndür
+            }
+            return new SuccessResult();//
         }
     }
 }

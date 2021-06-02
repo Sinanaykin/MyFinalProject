@@ -14,6 +14,7 @@ namespace Business.Abstract
         IDataResult<List<Product>> GetByUnitPrice(decimal min, decimal max);//Fiyata göre sıralama mesela şu fiyat aralığında olan ürünleri getir dicez ondan 2 tane fiyat yollamalıyız min ve max olarak
         IDataResult<List<ProductDetailDto>> GetProductDetail();//Mesela burda geriye bir dto ve success ile message da döner
         IDataResult<Product> GetById(int productId); //Gönderdiğimiz productId ye göre ürün döndürür.Burda geri döünş değeri Product tek bir ürün döner bu yüzden IDataResult daki T miz burda Product oldu
-        IResult Add(Product product);//bursı önceden void di ama artık bir sonuc dönücek bu yüzden IResult yaptık
+        IResult Add(Product product);//burası önceden void di ama artık bir sonuc dönücek bu yüzden IResult yaptık
+        IResult Update(Product product);
     }
 }
