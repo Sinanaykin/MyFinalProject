@@ -23,5 +23,7 @@ namespace Business.Constants//Constant sabit demek aynı mesajları sürekli tek
         public static string UserAlreadyExists="Kullanıcı mevcut";
         public static string AccessTokenCreated="Token oluşturuldu";
         public static string SuccessfulLogin="Başarılı giriş";
+
+        public static string ProductUpdated = "ürün güncellendi";
     }
 }

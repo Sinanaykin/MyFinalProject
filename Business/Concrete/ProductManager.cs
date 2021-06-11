@@ -2,6 +2,9 @@
 using Business.BusinessAspects.Autofac;
 using Business.Constants;
 using Business.ValidationRules.FluentValidations;
+using Core.Aspects.Autofac.Caching;
+using Core.Aspects.Autofac.Performance;
+using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Validation;
 using Core.Utilities.Business;
@@ -29,6 +32,7 @@ namespace Business.Concrete
 
         [SecuredOperation("product.add,admin")]//Ürün ekleme işlemini sadece admin yapabilir demek bu
         [ValidationAspect(typeof(ProductValidator))]//Add metodunu ProductValidator u kullanarak doğrula demek bu
+        [CacheRemoveAspect("IProductService.Get")]//Ürün ekleyince IProductService deki  bütün Get leri siler .IProductService dedik çünkü hepsi ona bağlı.
         public IResult Add(Product product)//Geri dönüş değerini voidden IResult message döndürücek artık çünkü
         {
             //Yarın öbür gün yeni kural gelirse kuralı en altta oluştur virgül diyip buraya(BusinessRules.Run içine) ekle işlem tamam.
@@ -47,7 +51,8 @@ namespace Business.Concrete
 
 
         }
-
+        
+        [CacheAspect]//Getaall daha önceden çağırılmışsa tekrar database den almaz veriyi cache den alır
         public IDataResult<List<Product>> GetAll()
         {
             //iş kodları
@@ -65,6 +70,8 @@ namespace Business.Concrete
             //IProductDal içinde tekrar bu metodtan oluturmaya gerek yok GetAll a filtre vererek yapabiliriz bunu
         }
 
+        [CacheAspect]
+       //[PerformanceAspect(10)]//metodun çalışması 5 saniyeyi geçerse beni uyar dicez.Hata vermesin diye kapattık şimdilik
         public IDataResult<Product> GetById(int productId)
         {
             return new SuccessDataResult<Product> (_productDal.Get(p => p.ProductId == productId));//data ve success(true ) döner burdada
@@ -82,9 +89,11 @@ namespace Business.Concrete
         }
 
         [ValidationAspect(typeof(ProductValidator))]
+        [CacheRemoveAspect("IProductService.Get")]//Ürün güncelleyince IProductService deki  bütün Getleri siler .IProductService dedik çünkü hepsi ona bağlı.
         public IResult Update(Product product)
         {
-            throw new NotImplementedException();
+            _productDal.Update(product);
+            return new SuccessResult(Messages.ProductUpdated);
         }
 
 
@@ -119,6 +128,21 @@ namespace Business.Concrete
                 return new ErrorResult(Messages.CategoryLimitExceded); //limit aşıldı diye mesaj döndür
             }
             return new SuccessResult();//
+        }
+        
+        //[TransactionScopeAspect]//bunuda kapadık hata vermesin diye
+        public IResult AddTransactionalTest(Product product)
+        {
+            //Add(product);
+            //if (product.UnitPrice<10)
+            //{
+            //    throw new Exception("");
+            //}
+            //Add(product);
+            //return null;
+            _productDal.Update(product);
+            _productDal.Add(product);
+            return new SuccessResult(Messages.ProductUpdated);
         }
     }
 }

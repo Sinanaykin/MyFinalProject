@@ -16,5 +16,6 @@ namespace Business.Abstract
         IDataResult<Product> GetById(int productId); //Gönderdiğimiz productId ye göre ürün döndürür.Burda geri döünş değeri Product tek bir ürün döner bu yüzden IDataResult daki T miz burda Product oldu
         IResult Add(Product product);//burası önceden void di ama artık bir sonuc dönücek bu yüzden IResult yaptık
         IResult Update(Product product);
+        IResult AddTransactionalTest(Product product);//uydurmaca bir metod ekledik.Transaction yönetimi :Uygulamalarda tutarlılığı korumak için yapılan bir yöntem.ben anneme para göndericem benim hesabımdan para cıktı ama anneme gitmeden sistem hata verdi durumda işlemi geri alması lazım sistemin
     }
 }
