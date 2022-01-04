@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace WebAPI.Controllers
@@ -24,7 +25,8 @@ namespace WebAPI.Controllers
 
         [HttpGet("getall")]
         public IActionResult GetAll()//IActionResult Http kodlarını döndürebileceğimiz yapı dır 
-        { 
+        {
+            Thread.Sleep(1000);
 
           var result = _productService.GetAll();
             if (result.Success)//eğer resul basarılı ise
@@ -35,10 +37,22 @@ namespace WebAPI.Controllers
         }
 
         //[HttpGet("{id}")]//burada bir id alıcam diyebiliriz getleri ayırmak için
-        [HttpGet("{getbyid}")]//yada 2. yol isim(alias) verebiliriz Get ler karısmasın diye hepsine isim vererek yapmak daha güzel
+        [HttpGet("getbyid")]//yada 2. yol isim(alias) verebiliriz Get ler karısmasın diye hepsine isim vererek yapmak daha güzel
         public IActionResult GetById(int id)//GetById metodu bizden bir productId bekliyor burda ona id yi gönderiyoruz.
         {
             var result = _productService.GetById(id);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        //[HttpGet("{id}")]//burada bir id alıcam diyebiliriz getleri ayırmak için
+        [HttpGet("getbycategory")]//yada 2. yol isim(alias) verebiliriz Get ler karısmasın diye hepsine isim vererek yapmak daha güzel
+        public IActionResult GetByCategory(int categoryid)//GetById metodu bizden bir productId bekliyor burda ona id yi gönderiyoruz.
+        {
+            var result = _productService.GetAllByCategory(categoryid);
             if (result.Success)
             {
                 return Ok(result);

@@ -42,7 +42,7 @@ namespace WebAPI
             ////Singleton da Bellekte bir kere ProductManager oluşturulur herkes onu kullanır 
             //services.AddSingleton<IProductDal, EfProductDal>();//Biri IProductDal isterse biri ona EfProductDal ver demek
 
-          
+            services.AddCors();//cors desteği ekliyoruz burdda
 
             var tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
 
@@ -74,6 +74,8 @@ namespace WebAPI
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCors(builder=>builder.WithOrigins("http://localhost:4200").AllowAnyHeader());//http://localhost:4200 bu adresden yani angular tarafından gelen tüm isteklere(get,post...) izin ver diyoruz burda
 
             app.UseHttpsRedirection();
 

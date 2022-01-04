@@ -30,7 +30,7 @@ namespace Business.Concrete
             _categoryService = categoryService;
         }
 
-        [SecuredOperation("product.add,admin")]//Ürün ekleme işlemini sadece admin yapabilir demek bu
+        //[SecuredOperation("product.add,admin")]//Ürün ekleme işlemini sadece admin yapabilir demek bu
         [ValidationAspect(typeof(ProductValidator))]//Add metodunu ProductValidator u kullanarak doğrula demek bu
         [CacheRemoveAspect("IProductService.Get")]//Ürün ekleyince IProductService deki  bütün Get leri siler .IProductService dedik çünkü hepsi ona bağlı.
         public IResult Add(Product product)//Geri dönüş değerini voidden IResult message döndürücek artık çünkü
@@ -64,9 +64,9 @@ namespace Business.Concrete
             return new SuccessDataResult<List<Product>> (_productDal.GetAll(),Messages.ProductsListed);//Burda eskiden return _productDal.GetAll() dı. şimdi Geriye hem ürünler hem succcess(true default olarak SuccesDataResult uldugu için) hem message döndürür o yüzden böyle
         }
 
-        public IDataResult<List<Product>> GetAllByCategory(int id)
+        public IDataResult<List<Product>> GetAllByCategory(int categoryId)
         {
-            return new SuccessDataResult<List<Product>>(_productDal.GetAll(p => p.CategoryId == id));//Product içindeki CategoryId eşitse bizim gönderdiğimiz id onları filtrele demek.Burda sadece data ve success(true ) döner.
+            return new SuccessDataResult<List<Product>>(_productDal.GetAll(p => p.CategoryId == categoryId));//Product içindeki CategoryId eşitse bizim gönderdiğimiz id onları filtrele demek.Burda sadece data ve success(true ) döner.
             //IProductDal içinde tekrar bu metodtan oluturmaya gerek yok GetAll a filtre vererek yapabiliriz bunu
         }
 

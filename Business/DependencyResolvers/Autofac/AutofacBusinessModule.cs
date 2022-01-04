@@ -19,7 +19,7 @@ namespace Business.DependencyResolvers.Autofac
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<ProductManager>().As<IProductService>().SingleInstance();//Startupda yaptıgımız işlemi burda yapıyoruz biris IProductService isterse ona ProductManager ver.Singleinstance tek bir instance olusturuyo demek
+            builder.RegisterType<ProductManager>().As<IProductService>().SingleInstance();//Startupda yaptıgımız işlemi burda yapıyoruz birisi IProductService isterse ona ProductManager ver.Singleinstance tek bir instance olusturuyo demek
             builder.RegisterType<EfProductDal>().As<IProductDal>().SingleInstance();
 
             builder.RegisterType<CategoryManager>().As<ICategoryService>().SingleInstance();
