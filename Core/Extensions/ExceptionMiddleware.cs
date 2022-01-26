@@ -44,7 +44,7 @@ namespace Core.Extensions
                     message = e.Message;//message ı exception daki yani e'deki Message ile değiştir
                     errors = ((ValidationException) e).Errors;//gelen hata validationexception hatası oldugunu biliyoruz
                     httpContext.Response.StatusCode = 400; //Validation hatası ise  400 dönsün StatusCode.
-                return httpContext.Response.WriteAsync(text: new ValidationErrorDetails //Eğer validation hatsı ise aşağıdakileri döner.Ağaşıdakiler de ErrorDetails daki prop lar
+                return httpContext.Response.WriteAsync(text: new ValidationErrorDetails //    Eğer validation hatsı ise aşağıdakileri döner.Ağaşıdakiler de ErrorDetails daki prop lar
                 {
                     StatusCode = 400,
                     Message = message,

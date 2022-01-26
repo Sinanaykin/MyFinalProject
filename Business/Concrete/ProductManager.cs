@@ -30,7 +30,7 @@ namespace Business.Concrete
             _categoryService = categoryService;
         }
 
-        //[SecuredOperation("product.add,admin")]//Ürün ekleme işlemini sadece admin yapabilir demek bu
+        [SecuredOperation("product.add,admin")]//Ürün ekleme işlemini sadece admin yapabilir demek bu
         [ValidationAspect(typeof(ProductValidator))]//Add metodunu ProductValidator u kullanarak doğrula demek bu
         [CacheRemoveAspect("IProductService.Get")]//Ürün ekleyince IProductService deki  bütün Get leri siler .IProductService dedik çünkü hepsi ona bağlı.
         public IResult Add(Product product)//Geri dönüş değerini voidden IResult message döndürücek artık çünkü
